@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Photo Gallery</title>
+  <style>
+    .gallery {
+      position: relative;
+      width: 100%;
+      max-width: 600px; /* Adjust as needed */
+      margin: auto;
+      overflow: hidden;
+    }
+    .gallery img {
+      width: 100%;
+      display: none;
+    }
+    .gallery img.active {
+      display: block;
+    }
+    .buttons {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+    }
+    .dots {
+      text-align: center;
+      padding-top: 10px;
+    }
+    .dot {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin: 0 5px;
+      background-color: #bbb;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .dot.active {
+      background-color: #717171;
+    }
+  </style>
+</head>
+<body>
+  <div id="gallery" class="gallery">
+    <!-- Slides will be added here dynamically -->
+  </div>
+  <div class="buttons">
+    <button id="prev">&#10094;</button>
+    <button id="next">&#10095;</button>
+  </div>
+  <div id="dots" class="dots">
+    <!-- Dots will be added here dynamically -->
+  </div>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+    const dotsContainer = document.getElementById('dots');
+
+    fetch('https://api.github.com/repos/hyhsuen/notion_widgets/contents/')
+      .then(response => response.json())
+      .then(data => {
+        const images = data.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file.name)).slice(0, 10); // Limit to 10 images
+        images.forEach((file, index) => {
+          const img = new Image();
+          img.src = file.download_url;
+          img.alt = file.name;
+          img.style.display = 'none'; // Hide all images by default
+          gallery.appendChild(img);
+
+          // Create dots
+          const dot = document.createElement('span');
+          dot.classList.add('dot');
+          if (index === 0) {
+            img.classList.add('active'); // Show first image
+            dot.classList.add('active'); // Highlight first dot
+          }
+          dot.addEventListener('click', () => {
+            updateGallery(index);
+          });
+          dotsContainer.appendChild(dot);
+        });
+
+        const updateGallery = (index) => {
+          const images = gallery.querySelectorAll('img');
+          const dots = dotsContainer.querySelectorAll('.dot');
+          images.forEach(img => { img.classList.remove('active'); });
+          dots.forEach(dot => { dot.classList.remove('active'); });
+          images[index].classList.add('active');
+          dots[index].classList.add('active');
+        };
+
+        // Next and previous buttons
+        const nextButton = document.getElementById('next');
+        const prevButton = document.getElementById('prev');
+        let currentIndex = 0;
+
+        nextButton.addEventListener('click', () => {
+          currentIndex = (currentIndex + 1) % images.length;
+          updateGallery(currentIndex);
+        });
+
+        prevButton.addEventListener('click', () => {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+          updateGallery(currentIndex);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
