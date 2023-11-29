@@ -1,1 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Photo Gallery</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css'>
+  <style>
+    .gallery {
+      position: relative;
+      width: 100vw;
+      height: 100vh; /* Set the height to be full viewport height */
+      overflow: hidden;
+    }
+    .gallery img {
+      /* Remove width: 100% and add the following */
+      position: absolute;
+      max-width: 100vw; /* Maximum width of the viewport */
+      max-height: calc(100vh - 40px); /* Maximum height of the viewport minus space for dots */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: contain; /* Maintain aspect ratio */
+    }
+    .gallery img.active {
+      display: block;
+    }
+    .buttons {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none; /* Add this to make sure the button area doesn't block clicks */
+    }
+    .buttons button {
+      pointer-events: auto; /* Enable pointer events for buttons */
+      border: 2px solid #e5ebf3;
+      background-color: transparent;
+      color: #e5ebf3;
+      cursor: pointer;
+      padding: 13px 15px;
+      border-radius: 50%;
+      outline: none;
+      font-size: 18px; /* Set the font size for the icons */
+    }
+    .buttons button:hover {
+      background-color: #e5ebf3;
+      color: #362a2b;
+    }
+    .dots {
+      position: absolute;
+      width: 100%;
+      bottom: 10px; /* Adjust as necessary, 10px above the bottom edge */
+      text-align: center;
+    }
+    .dot {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin: 0 5px;
+      background-color: #bbb;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .dot.active {
+      background-color: #717171;
+    }
+  </style>
+</head>
+<body>
+  <div id="gallery" class="gallery">
+    <!-- Slides will be added here dynamically -->
+  </div>
+  <div class="buttons">
+    <button id="prev"><i class="fas fa-arrow-left"></i></button>
+    <button id="next"><i class="fas fa-arrow-right"></i></button>
+  </div>
+  <div id="dots" class="dots">
+    <!-- Dots will be added here dynamically -->
+  </div>
 
+  <script>
+    const gallery = document.getElementById('gallery');
+    const dotsContainer = document.getElementById('dots');
+
+    fetch('https://api.github.com/repos/hyhsuen/notion_widgets/Nice/')
+      .then(response => response.json())
+      .then(data => {
+        const images = data.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file.name)).slice(0, 10); // Limit to 10 images
+        images.forEach((file, index) => {
+          const img = new Image();
+          img.onload = function() {
+            // Once the image is loaded, then set the display
+            if (index === 0) {
+              img.classList.add('active'); // Show first image
+            }
+          };
+          img.src = file.download_url;
+          img.alt = file.name;
+          // Hide all images by default, except the first one
+          img.style.display = index === 0 ? 'block' : 'none';
+          gallery.appendChild(img);
+
+          // Create dots
+          const dot = document.createElement('span');
+          dot.classList.add('dot');
+          if (index === 0) {
+            dot.classList.add('active'); // Highlight first dot
+          }
+          dot.addEventListener('click', () => {
+            updateGallery(index);
+          });
+          dotsContainer.appendChild(dot);
+        });
+
+        const updateGallery = (index) => {
+          const images = gallery.querySelectorAll('img');
+          const dots = dotsContainer.querySelectorAll('.dot');
+          images.forEach(img => { img.style.display = 'none'; img.classList.remove('active'); });
+          dots.forEach(dot => { dot.classList.remove('active'); });
+          images[index].style.display = 'block';
+          images[index].classList.add('active');
+          dots[index].classList.add('active');
+        };
+
+        // Next and previous buttons
+        const nextButton = document.getElementById('next');
+        const prevButton = document.getElementById('prev');
+        let currentIndex = 0;
+
+        nextButton.addEventListener('click', () => {
+          currentIndex = (currentIndex + 1) % images.length;
+          updateGallery(currentIndex);
+        });
+
+        prevButton.addEventListener('click', () => {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+          updateGallery(currentIndex);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
