@@ -84,7 +84,7 @@
     const gallery = document.getElementById('gallery');
     const dotsContainer = document.getElementById('dots');
 
-    fetch('https://api.github.com/repos/hyhsuen/notion_widgets/Nice/contents/')
+    fetch('https://api.github.com/repos/hyhsuen/notion_widgets/contents/Nice')
       .then(response => response.json())
       .then(data => {
         const images = data.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file.name)).slice(0, 10); // Limit to 10 images
