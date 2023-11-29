@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Photo Gallery</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css'>
   <style>
     .gallery {
       position: relative;
@@ -25,6 +26,22 @@
       transform: translateY(-50%);
       display: flex;
       justify-content: space-between;
+      pointer-events: none; /* Add this to make sure the button area doesn't block clicks */
+    }
+    .buttons button {
+      pointer-events: auto; /* Enable pointer events for buttons */
+      border: 2px solid #e5ebf3;
+      background-color: transparent;
+      color: #e5ebf3;
+      cursor: pointer;
+      padding: 13px 15px;
+      border-radius: 50%;
+      outline: none;
+      font-size: 18px; /* Set the font size for the icons */
+    }
+    .buttons button:hover {
+      background-color: #e5ebf3;
+      color: #362a2b;
     }
     .dots {
       text-align: center;
@@ -49,8 +66,8 @@
     <!-- Slides will be added here dynamically -->
   </div>
   <div class="buttons">
-    <button id="prev">&#10094;</button>
-    <button id="next">&#10095;</button>
+    <button id="prev"><i class="fas fa-arrow-left"></i></button>
+    <button id="next"><i class="fas fa-arrow-right"></i></button>
   </div>
   <div id="dots" class="dots">
     <!-- Dots will be added here dynamically -->
