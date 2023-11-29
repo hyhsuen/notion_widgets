@@ -71,6 +71,9 @@
           img.style.display = 'none'; // Hide all images by default
           gallery.appendChild(img);
 
+          // Add this inside your fetch .then block after images are appended
+          console.log("Image elements added to the gallery:", gallery.querySelectorAll('img'));
+
           // Create dots
           const dot = document.createElement('span');
           dot.classList.add('dot');
@@ -92,6 +95,9 @@
           images[index].classList.add('active');
           dots[index].classList.add('active');
         };
+        
+        // Add this right after you define the updateGallery function
+        console.log("Initial active image:", gallery.querySelector('img.active'));
 
         // Next and previous buttons
         const nextButton = document.getElementById('next');
