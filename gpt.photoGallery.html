@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Photo Gallery</title>
+  <style>
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .gallery img {
+      margin: 5px;
+      width: 200px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="gallery" class="gallery">
+    <!-- Images will be added here dynamically -->
+  </div>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+
+    fetch('https://api.github.com/repos/your-username/your-repo/contents/path/to/your/images')
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(file => {
+          if (file.type === 'file' && /\.(jpg|jpeg|png|gif)$/i.test(file.name)) {
+            const img = new Image();
+            img.src = file.download_url;
+            img.alt = file.name;
+            gallery.appendChild(img);
+          }
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
