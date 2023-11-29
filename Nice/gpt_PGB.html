@@ -87,7 +87,7 @@
     fetch('https://api.github.com/repos/hyhsuen/notion_widgets/contents/Nice')
       .then(response => response.json())
       .then(data => {
-        const images = data.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file.name)).slice(0, 10); // Limit to 10 images
+        const images = data.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file.name)).slice(0, 20); // Limit to 20 images
         images.forEach((file, index) => {
           const img = new Image();
           img.onload = function() {
