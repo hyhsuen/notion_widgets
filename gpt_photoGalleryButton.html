@@ -66,19 +66,22 @@
         const images = data.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file.name)).slice(0, 10); // Limit to 10 images
         images.forEach((file, index) => {
           const img = new Image();
+          img.onload = function() {
+            // Once the image is loaded, then set the display
+            if (index === 0) {
+              img.classList.add('active'); // Show first image
+            }
+          };
           img.src = file.download_url;
           img.alt = file.name;
-          img.style.display = 'none'; // Hide all images by default
+          // Hide all images by default, except the first one
+          img.style.display = index === 0 ? 'block' : 'none';
           gallery.appendChild(img);
-
-          // Add this inside your fetch .then block after images are appended
-          console.log("Image elements added to the gallery:", gallery.querySelectorAll('img'));
 
           // Create dots
           const dot = document.createElement('span');
           dot.classList.add('dot');
           if (index === 0) {
-            img.classList.add('active'); // Show first image
             dot.classList.add('active'); // Highlight first dot
           }
           dot.addEventListener('click', () => {
@@ -90,14 +93,12 @@
         const updateGallery = (index) => {
           const images = gallery.querySelectorAll('img');
           const dots = dotsContainer.querySelectorAll('.dot');
-          images.forEach(img => { img.classList.remove('active'); });
+          images.forEach(img => { img.style.display = 'none'; img.classList.remove('active'); });
           dots.forEach(dot => { dot.classList.remove('active'); });
+          images[index].style.display = 'block';
           images[index].classList.add('active');
           dots[index].classList.add('active');
         };
-        
-        // Add this right after you define the updateGallery function
-        console.log("Initial active image:", gallery.querySelector('img.active'));
 
         // Next and previous buttons
         const nextButton = document.getElementById('next');
